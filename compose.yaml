@@ -1,8 +1,35 @@
 services:
   netdisco-mcp:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: netdisco-mcp
     restart: unless-stopped
-    env_file: .env
     ports:
-      - "127.0.0.1:8000:8000"
+      - "${MCP_BIND_ADDRESS:-127.0.0.1}:${MCP_PORT:-8000}:8000"
+    environment:
+      NETDISCO_URL: ${NETDISCO_URL}
+      NETDISCO_API_TOKEN: ${NETDISCO_API_TOKEN:-}
+      NETDISCO_AUTH_SCHEME: ${NETDISCO_AUTH_SCHEME:-Bearer}
+      NETDISCO_USERNAME: ${NETDISCO_USERNAME:-}
+      NETDISCO_PASSWORD: ${NETDISCO_PASSWORD:-}
+      NETDISCO_TLS_VERIFY: ${NETDISCO_TLS_VERIFY:-1}
+      NETDISCO_READ_ONLY: ${NETDISCO_READ_ONLY:-0}
+      NETDISCO_GUIDANCE_GATE: ${NETDISCO_GUIDANCE_GATE:-1}
+      NETDISCO_GUIDANCE_TTL: ${NETDISCO_GUIDANCE_TTL:-1800}
+      NETDISCO_MAX_RESPONSE_CHARS: ${NETDISCO_MAX_RESPONSE_CHARS:-50000}
+      NETDISCO_MCP_TRANSPORT: streamable-http
+      NETDISCO_MCP_HTTP_HOST: 0.0.0.0
+      NETDISCO_MCP_HTTP_PORT: 8000
+      PYTHONDONTWRITEBYTECODE: "1"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    networks:
+      - mcp-edge
 
+networks:
+  mcp-edge:
+    external: true
