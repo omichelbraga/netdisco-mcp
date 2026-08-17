@@ -5,8 +5,8 @@ services:
       dockerfile: Dockerfile
     container_name: netdisco-mcp
     restart: unless-stopped
-    ports:
-      - "${MCP_BIND_ADDRESS:-127.0.0.1}:${MCP_PORT:-8000}:8000"
+    expose:
+      - "8000"
     environment:
       NETDISCO_URL: ${NETDISCO_URL}
       NETDISCO_API_TOKEN: ${NETDISCO_API_TOKEN:-}
