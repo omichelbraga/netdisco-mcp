@@ -37,6 +37,7 @@ class Settings:
     transport: str
     http_host: str
     http_port: int
+    mcp_bearer_token: str | None
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -74,6 +75,7 @@ class Settings:
             transport=transport,
             http_host=os.getenv("NETDISCO_MCP_HTTP_HOST", "127.0.0.1"),
             http_port=_int("NETDISCO_MCP_HTTP_PORT", 8000),
+            mcp_bearer_token=os.getenv("NETDISCO_MCP_BEARER_TOKEN") or None,
         )
 
     def authorization_header(self) -> str | None:

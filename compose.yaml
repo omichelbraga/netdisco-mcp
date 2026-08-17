@@ -21,6 +21,7 @@ services:
       NETDISCO_MCP_TRANSPORT: streamable-http
       NETDISCO_MCP_HTTP_HOST: 0.0.0.0
       NETDISCO_MCP_HTTP_PORT: 8000
+      NETDISCO_MCP_BEARER_TOKEN: ${NETDISCO_MCP_BEARER_TOKEN}
       PYTHONDONTWRITEBYTECODE: "1"
     security_opt:
       - no-new-privileges:true

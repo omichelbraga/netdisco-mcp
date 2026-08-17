@@ -9,6 +9,7 @@ import httpx
 from fastmcp import FastMCP
 from fastmcp.server.middleware.response_limiting import ResponseLimitingMiddleware
 
+from .auth import BearerTokenVerifier
 from .config import Settings
 from .guidance import GuidanceGateMiddleware, load_guidance
 from .spec import Operation, fetch_swagger, iter_operations, normalize_spec, search_operations
@@ -56,9 +57,15 @@ def build_server(settings: Settings) -> tuple[FastMCP, list[Operation]]:
     operations = list(iter_operations(spec))
     guidance = load_guidance()
 
+    auth = (
+        BearerTokenVerifier(settings.mcp_bearer_token)
+        if settings.mcp_bearer_token
+        else None
+    )
     main = FastMCP(
         name="Netdisco MCP",
         instructions=SERVER_INSTRUCTIONS,
+        auth=auth,
     )
 
     @main.tool(
@@ -135,4 +142,3 @@ def build_server(settings: Settings) -> tuple[FastMCP, list[Operation]]:
         settings.read_only,
     )
     return main, operations
-

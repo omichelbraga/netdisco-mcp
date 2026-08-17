@@ -45,6 +45,7 @@ Important settings:
 | `NETDISCO_GUIDANCE_TTL` | `1800` | Guidance activity window in seconds |
 | `NETDISCO_MAX_RESPONSE_CHARS` | `50000` | Protect agent context from oversized responses |
 | `NETDISCO_MCP_TRANSPORT` | `stdio` | `stdio` or `streamable-http` (`stdin`/`http` aliases work) |
+| `NETDISCO_MCP_BEARER_TOKEN` | unset | Require this bearer token on Streamable HTTP requests |
 
 Basic authentication is also supported with `NETDISCO_USERNAME` and
 `NETDISCO_PASSWORD`.
@@ -93,6 +94,7 @@ Example MCP client configuration:
 NETDISCO_MCP_TRANSPORT=streamable-http \
 NETDISCO_MCP_HTTP_HOST=127.0.0.1 \
 NETDISCO_MCP_HTTP_PORT=8000 \
+NETDISCO_MCP_BEARER_TOKEN=replace-with-a-separate-random-token \
 uv run netdisco-mcp
 ```
 
@@ -109,16 +111,20 @@ claude mcp add netdisco \
   --transport http http://127.0.0.1:8000/mcp
 ```
 
+Remote clients must send `Authorization: Bearer <token>` when
+`NETDISCO_MCP_BEARER_TOKEN` is configured. Authentication applies to HTTP;
+stdio remains local-process transport and does not require the bearer token.
+
 ## Container
 
 ```bash
 docker compose up --build -d
 ```
 
-The supplied Compose file runs Streamable HTTP and only publishes it on
-localhost. Put a properly authenticated TLS reverse proxy in front of it for
-shared use. Do not publish an unauthenticated MCP endpoint containing
-network-management tools to the public internet.
+The supplied Compose file runs Streamable HTTP on its Docker network without
+publishing a host port. Put a TLS reverse proxy on the same network and set
+`NETDISCO_MCP_BEARER_TOKEN` before sharing the endpoint. Do not publish an
+unauthenticated MCP endpoint containing network-management tools.
 
 ## Tool naming examples
 
